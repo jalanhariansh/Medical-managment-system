@@ -1,0 +1,26 @@
+{% extends "staff_dashboard/base.html" %}
+{%load crispy_forms_tags%}
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <div class="container mb-5 mt-3">
+            <div class="container">
+                <ul class="list-unstyled">
+                    {%for app in apps%}
+                        <li class="media">
+                            <div class="media-body">
+                                <div class="article-metadata">
+                                    <small class="text-muted">{{ app.date_posted|date:"d F, Y" }}</small>
+                                </div>
+                                <h2 class="article-title"><a  href="{%url 'staff-apps' app.id%}">{{ app.department }}</a><small class="text-muted">  (Doc preffered: {{ app.doc_name }})</small></h2>
+                                <p class="article-content">Symptoms: {{ app.symptoms }}; Patient: {{ app.patient.first_name }} {{ app.patient.last_name }}</p>
+                            </div>
+                        </li>
+                    {%endfor%}
+                </ul>
+                <hr>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

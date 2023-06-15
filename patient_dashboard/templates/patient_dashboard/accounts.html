@@ -1,0 +1,39 @@
+{% extends "patient_dashboard/base.html" %}
+{%load crispy_forms_tags%}
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <div class="container mb-5 mt-3">
+            <div class="row d-flex align-items-baseline">
+                <div class="col-xl-9">
+                    <p style="color: #7e8d9f;font-size: 20px;">Invoice:(Total bill: {%if total_price%}₹{{total_price}}{%else%}NA{%endif%})</p>
+                </div>
+            </div>
+            <div class="container">
+                <ul class="list-unstyled">
+                    {%for app in apps%}
+                        <li class="media">
+                            <div class="media-body">
+                                <div class="article-metadata">
+                                    <small class="text-muted">{{ app.date_posted|date:"d F, Y" }}</small>
+                                </div>
+                                <h2 class="article-title">{{ app.department }}<small class="text-muted">  (Doc preffered: {{ app.doc_name }})</small></h2>
+                                <p class="article-content">{{ app.symptoms }}</p>
+                                
+                                {%if app.prescription%}
+                                    <h6>STATUS: Approved</h6>
+                                    <h6>COST: ₹{{app.cost}}</h6>
+                                {%else%}
+                                    <h6>STATUS: Pending</h6>
+                                {%endif%}
+                                </h6>
+                            </div>
+                        </li>
+                    {%endfor%}
+                </ul>
+                <hr>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
