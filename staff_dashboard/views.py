@@ -35,7 +35,7 @@ def chats(request,room_name):
 def chats(request,room_name):
    users = get_user_model()
    user = get_object_or_404(users, username=room_name[:-len(request.user.username)])
-   return render(request,'patient_dashboard/chats.html',{'view_user': user,'all_users': users.objects.filter(is_patient=True),'room_name': room_name,'cur_user': request.user})
+   return render(request,'staff_dashboard/chats.html',{'view_user': user,'all_users': users.objects.filter(is_patient=True),'room_name': room_name,'cur_user': request.user})
 
 def chathome(request):
    users = get_user_model()
