@@ -10,6 +10,8 @@ from django.views.generic import (
 )
 from django.db.models import Sum
 from django.db.models import Q
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 # Create your views here.
 
 def home(request):
@@ -20,6 +22,8 @@ def home(request):
       if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)("apps", {'type': 'chatroom_message','message': 'refresh',})
             messages.success(request, f'your account has been updated')
    else:
       u_form = UserUpdateForm(instance=user)
@@ -38,7 +42,10 @@ class PostCreateView(CreateView):
 
     def form_valid(self,form):
         form.instance.patient = self.request.user
-        return super().form_valid(form)
+        final = super().form_valid(form)
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)("apps", {'type': 'chatroom_message','message': 'refresh',})
+        return final
     
 def chats(request,room_name):
    users = get_user_model()

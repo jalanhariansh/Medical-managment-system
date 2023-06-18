@@ -6,6 +6,8 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from .forms import AppUpdateForm
 from django.views.generic import ListView
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 
 # Create your views here.
@@ -44,6 +46,8 @@ def approve(request,pk):
         form = AppUpdateForm(request.POST, request.FILES, instance=app)
         if form.is_valid():
             form.save()
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)("apps", {'type': 'chatroom_message','message': 'refresh',})
             messages.success(request, f'prescription has been uploaded')
             return redirect('staff-home')
     else:
