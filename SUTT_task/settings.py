@@ -60,8 +60,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-#    'patient_dashboard.middleware.RestrictUserMiddleware'
-#    'staff_dashboard.middleware.RestrictUserMiddleware'
+    'patient_dashboard.middleware.RestrictUserMiddleware',
+    'staff_dashboard.middleware.RestrictUserMiddleware'
 ]
 
 ROOT_URLCONF = 'SUTT_task.urls'
@@ -159,10 +159,7 @@ SITE_ID = 4
 SOCIALACCOUNT_LOGIN_ON_GET=True
 AUTH_USER_MODEL = 'users.User'
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-CRISPY_TEMPLATE_PACK = "bootstrap5"
-
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
 ASGI_APPLICATION = "SUTT_task.routing.application"
@@ -172,3 +169,7 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     }
 }
+
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

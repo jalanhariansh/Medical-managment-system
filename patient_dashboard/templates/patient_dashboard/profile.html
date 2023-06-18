@@ -2,12 +2,19 @@
 {%load crispy_forms_tags%}
 {% block content %}
 <div class="content-section">
-    <h2 class="account-heading">{{view_user.first_name}} {{view_user.last_name}}</h2>
+    <h2 class="account-heading">{{user.first_name}} {{user.last_name}}</h2>
+    <form method="POST">
+        {%csrf_token%}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Profile Info</legend>
+            {{u_form|crispy}}
+            {{p_form|crispy}}
+        </fieldset>
+        <div class="form-group">
+            <button class="btn btn-outline-info" type="submit">Update</button>
+        </div>
+    </form>
     <dl class="row">
-        <dt class="col-sm-3">Gender: </dt> <dd class="col-sm-9">{{view_user.gender}}</dd>
-        <dt class="col-sm-3">Phone: </dt> <dd class="col-sm-9">{{view_user.phone}}</dd>
-        <dt class="col-sm-3">Email: </dt> <dd class="col-sm-9">{{view_user.email}}</dd>
-        <dt class="col-sm-3">History of illness: </dt> <dd class="col-sm-9">{{view_user.patient.history_of_illness}}</dd>
         <dt class="col-sm-3">Appointments: </dt>
             <dd class="col-sm-9">
                 <ul class="list-unstyled">
@@ -39,16 +46,16 @@
             </dd>    
         </li>
     </ul>
+    <script>
+        const chatSocket = new WebSocket(
+            'ws://' +
+            window.location.host +
+            '/ws/apps/'
+        );
+    
+        chatSocket.onmessage = function (e) {
+            window.location.reload()
+        }
+    </script>
 </div>
 {% endblock content %}
-{%block sidebar%}
-<h3>Our Sidebar</h3>
-<p class='text-muted'>
-<ul class="list-group">
-    {%for users in all_users%}
-    <a class="list-group-item list-group-item-light-action"
-        href="{%url 'patient-profile' users.username%}">{{users.first_name}} {{users.last_name}}</a>
-    {%endfor%}
-</ul>
-</p>
-{%endblock sidebar%}

@@ -39,6 +39,17 @@
             </dd>    
         </li>
     </ul>
+    <script>
+        const chatSocket = new WebSocket(
+            'ws://' +
+            window.location.host +
+            '/ws/apps/'
+        );
+    
+        chatSocket.onmessage = function (e) {
+            window.location.reload()
+        }
+    </script>
 </div>
 {% endblock content %}
 {%block sidebar%}

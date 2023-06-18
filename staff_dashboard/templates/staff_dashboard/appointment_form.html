@@ -2,17 +2,17 @@
 {%load crispy_forms_tags%}
 {% block content %}
 <div class="content-section">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {%csrf_token%}
         <div class="media">
-            {%if object.prescription%}
-                <img class="rounded-circle account-img" src="{{object.prescription.url}}">
+            {%if app.prescription%}
+                <img class="rounded-circle account-img" src="{{app.prescription.url}}">
             {%endif%}
             <div class=" media-body">
-                <h2 class="account-heading">{{object.department}}</h2>
+                <h2 class="account-heading">{{app.department}}</h2>
                 <dl class="row">
-                    <dt class="col-sm-3">Symptoms: </dt> <dd class="col-sm-9">{{object.symptoms}}</dd>
-                    <dt class="col-sm-3">Patient: </dt> <dd class="col-sm-9"><a href="url 'staff-profiles' object.patient.username">{{object.patient.first_name}} {{object.patient.last_name}}</a></dd>
+                    <dt class="col-sm-3">Symptoms: </dt> <dd class="col-sm-9">{{app.symptoms}}</dd>
+                    <dt class="col-sm-3">Patient: </dt> <dd class="col-sm-9"><a href="url 'staff-profiles' app.patient.username">{{app.patient.first_name}} {{app.patient.last_name}}</a></dd>
             </div>
         </div>
         <fieldset class="form-group">
@@ -20,8 +20,20 @@
             {{form|crispy}}
         </fieldset>
         <div class="form-group">
-            <button class="btn btn-outline-info" type="submit">Submit</button>
+            <button class="btn btn-outline-info" id="submit" type="submit">Submit</button>
         </div>
+        <script>
+            document.querySelector('#submit').onclick = function (e) {
+            chatSocket.send(JSON.stringify({
+                'message': 'refresh',
+            }));
+            }
+            const chatSocket = new WebSocket(
+                'ws://' +
+                window.location.host +
+                '/ws/apps/'
+            );
+        </script>
     </form>
 </div>
 {% endblock content %}

@@ -18,6 +18,17 @@
                         </li>
                     {%endfor%}
                 </ul>
+                <script>
+                    const chatSocket = new WebSocket(
+                        'ws://' +
+                        window.location.host +
+                        '/ws/apps/'
+                    );
+                
+                    chatSocket.onmessage = function (e) {
+                        window.location.reload()
+                    }
+                </script>
                 <hr>
             </div>
         </div>

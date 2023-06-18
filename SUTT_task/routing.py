@@ -10,6 +10,7 @@ application = ProtocolTypeRouter({
         URLRouter(
             [
                 re_path(r'ws/chat/(?P<room_name>\w+)/$', consumers.ChatRoomConsumer.as_asgi()),
+                re_path(r'ws/apps/$', consumers.AppsConsumer.as_asgi()),
             ]
         )
     ),

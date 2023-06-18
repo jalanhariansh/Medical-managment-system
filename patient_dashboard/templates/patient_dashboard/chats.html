@@ -20,16 +20,17 @@
             </div>
         </div>
     </div>
-    {{ request.user.username|json_script:"user_username" }}
+    {{ request.user.first_name|json_script:"user_first_name" }}
+    {{ request.user.last_name|json_script:"user_last_name" }}
     {{ room_name|json_script:"room-name" }}
     <script>
-        const user_username = JSON.parse(document.getElementById('user_username').textContent);
+        const user_first_name = JSON.parse(document.getElementById('user_first_name').textContent);
+        const user_last_name = JSON.parse(document.getElementById('user_last_name').textContent);
         document.querySelector('#submit').onclick = function (e) {
             const messageInputDom = document.querySelector('#input');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
-                'message': message,
-                'username': user_username,
+                'message': user_first_name+" "+user_last_name+": "+message,
             }));
             messageInputDom.value = '';
         };
@@ -45,20 +46,27 @@
     
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
-            console.log(data)
-            document.querySelector('#chat-text').innerHTML += ((data.first_name+' '+data.last_name) + ': ' + data.message + '\n')
+            document.querySelector('#chat-text').innerHTML += (data.message)
         }
     </script>
 </div>
 
 {% endblock content %}
 {%block sidebar%}
+{%if search != ''%}
+<h3>Our Sidebar<small><p class="fw-lighter">Results for "{{search}}"</p></small></h3>
+{%else%}
 <h3>Our Sidebar</h3>
+{%endif%}
+<form class="form-inline my-2 my-lg-0">
+    <input class="form-control mr-sm-2" name="q" type="search" placeholder="Search" aria-label="Search">
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+</form>
 <p class='text-muted'>
 <ul class="list-group">
     {%for users in all_users%}
     <a class="list-group-item list-group-item-light-action"
-        href="{%url 'patient-chat' 'cur_user.username+users.username'%}">{{users.first_name}} {{users.last_name}}</a>
+        href="{%url 'patient-chat' cur_user.username|add:users.username%}">{{users.first_name}} {{users.last_name}}</a>
     {%endfor%}
 </ul>
 </p>

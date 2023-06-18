@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.urls import reverse
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.forms import UserCreationForm
-from .forms import UserRegisterForm,UserUpdateForm
+from .forms import UserRegisterForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 
@@ -10,7 +10,7 @@ from django.contrib.auth.forms import AuthenticationForm
 def home(request):
     try:
         if request.user.is_patient:
-            return redirect(reverse('staff-home'))
+            return redirect(reverse('patient-home'))
         elif request.user.is_staff:
             return redirect(reverse('staff-home'))
         return render(request,'users/home.html')

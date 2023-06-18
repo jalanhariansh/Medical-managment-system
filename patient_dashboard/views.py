@@ -3,21 +3,29 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from .models import Appointment
-from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import UserUpdateForm, ProfileUpdateForm
+from django.contrib import messages
 from django.views.generic import (
     CreateView,
 )
 from django.db.models import Sum
+from django.db.models import Q
 # Create your views here.
 
-def home(request, username):
-   users = get_user_model()
-   user = get_object_or_404(users, username=username)
-   apps = Appointment.objects.filter(patient = user)
-   return render(request,'patient_dashboard/profile.html',{'view_user': user,'all_users': users.objects.filter(is_patient=True),'apps': apps})
-
-def basic(request):
-   return HttpResponseRedirect('/patient/'+request.user.username)
+def home(request):
+   user = request.user
+   if request.method=='POST':
+      u_form = UserUpdateForm(request.POST, instance=user)
+      p_form = ProfileUpdateForm(request.POST, instance=request.user.patient)
+      if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, f'your account has been updated')
+   else:
+      u_form = UserUpdateForm(instance=user)
+      p_form = ProfileUpdateForm(instance=request.user.patient)
+   apps = Appointment.objects.filter(patient = user).order_by('-date_posted')
+   return render(request,'patient_dashboard/profile.html',{'user': user, 'apps': apps, 'u_form' : u_form, 'p_form' : p_form,})
 
 def accounts(request):
    apps = Appointment.objects.filter(patient = request.user)
@@ -35,7 +43,16 @@ class PostCreateView(CreateView):
 def chats(request,room_name):
    users = get_user_model()
    user = get_object_or_404(users, username=room_name[len(request.user.username):])
-   return render(request,'patient_dashboard/chats.html',{'view_user': user,'all_users': users.objects.filter(is_staff=True),'room_name': room_name,'cur_user': request.user})
+   search = ''
+   if 'q' in request.GET:
+      q = request.GET['q']
+        # data = Data.objects.filter(last_name__icontains=q)
+      multiple_q = Q((Q(first_name__icontains=q) | Q(last_name__icontains=q)) & Q(is_staff=True))
+      data = users.objects.filter(multiple_q)
+      search = q
+   else:
+      data = users.objects.filter(is_staff=True)
+   return render(request,'patient_dashboard/chats.html',{'view_user': user,'all_users': data,'room_name': room_name,'cur_user': request.user, 'search': search})
 
 def chathome(request):
    users = get_user_model()

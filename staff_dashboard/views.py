@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from patient_dashboard.models import Appointment
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+from .forms import AppUpdateForm
 from django.views.generic import ListView
 
 
@@ -29,14 +30,26 @@ def basic(request):
 
 def chats(request,room_name):
    users = get_user_model()
-   user = get_object_or_404(users, username=room_name.split[0])
-   return render(request,'staff_dashboard/chats.html',{'view_user': user,'all_users': users.objects.filter(is_patient=True)})
-
-def chats(request,room_name):
-   users = get_user_model()
+   print(room_name[:-len(request.user.username)])
    user = get_object_or_404(users, username=room_name[:-len(request.user.username)])
    return render(request,'staff_dashboard/chats.html',{'view_user': user,'all_users': users.objects.filter(is_patient=True),'room_name': room_name,'cur_user': request.user})
 
 def chathome(request):
    users = get_user_model()
    return HttpResponseRedirect('/staff/chat/'+users.objects.filter(is_patient=True).first().username+request.user.username)
+
+def approve(request,pk):
+    app = Appointment.objects.get(id=pk)
+    if request.method=='POST':
+        form = AppUpdateForm(request.POST, request.FILES, instance=app)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'prescription has been uploaded')
+            return redirect('staff-home')
+    else:
+        form = AppUpdateForm(instance=Appointment.objects.get(id=pk))
+    context = {
+        'form' : form,
+        'app' : app,
+    }
+    return render(request,'staff_dashboard/appointment_form.html',context)

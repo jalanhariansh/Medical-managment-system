@@ -23,3 +23,7 @@ class Appointment(models.Model):
 
     def get_absolute_url(self):
         return reverse('home')
+    
+class chats(models.Model):
+    room_name = models.TextField()
+    message = models.TextField(blank=True,default="")
