@@ -3,6 +3,7 @@
 {% block content %}
 <div class="content-section">
     <h2 class="account-heading">{{user.first_name}} {{user.last_name}}</h2>
+    <p>{{user.email}}</p>
     <form method="POST">
         {%csrf_token%}
         <fieldset class="form-group">
@@ -54,7 +55,8 @@
         );
     
         chatSocket.onmessage = function (e) {
-            window.location.reload()
+            const data = JSON.parse(e.data);
+            if(data.message=='refresh_apps'){window.location.reload()}
         }
     </script>
 </div>

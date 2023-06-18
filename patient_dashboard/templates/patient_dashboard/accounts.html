@@ -39,7 +39,8 @@
                     );
                 
                     chatSocket.onmessage = function (e) {
-                        window.location.reload()
+                        const data = JSON.parse(e.data);
+                        if(data.message=='refresh_apps'){window.location.reload()}
                     }
                 </script>
                 <hr>

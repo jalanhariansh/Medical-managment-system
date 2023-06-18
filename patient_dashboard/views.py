@@ -23,13 +23,13 @@ def home(request):
             u_form.save()
             p_form.save()
             channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)("apps", {'type': 'chatroom_message','message': 'refresh',})
+            async_to_sync(channel_layer.group_send)("apps", {'type': 'chatroom_message','message': 'refresh_profiles',})
             messages.success(request, f'your account has been updated')
    else:
       u_form = UserUpdateForm(instance=user)
       p_form = ProfileUpdateForm(instance=request.user.patient)
    apps = Appointment.objects.filter(patient = user).order_by('-date_posted')
-   return render(request,'patient_dashboard/profile.html',{'user': user, 'apps': apps, 'u_form' : u_form, 'p_form' : p_form,})
+   return render(request,'patient_dashboard/profile.html',{'user': user, 'apps': apps, 'u_form' : u_form, 'p_form' : p_form})
 
 def accounts(request):
    apps = Appointment.objects.filter(patient = request.user)
@@ -44,7 +44,7 @@ class PostCreateView(CreateView):
         form.instance.patient = self.request.user
         final = super().form_valid(form)
         channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)("apps", {'type': 'chatroom_message','message': 'refresh',})
+        async_to_sync(channel_layer.group_send)("apps", {'type': 'chatroom_message','message': 'refresh_apps',})
         return final
     
 def chats(request,room_name):

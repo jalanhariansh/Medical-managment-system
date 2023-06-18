@@ -45,9 +45,9 @@
             window.location.host +
             '/ws/apps/'
         );
-    
         chatSocket.onmessage = function (e) {
-            window.location.reload()
+            const data = JSON.parse(e.data);
+            if(data.message=='refresh_profiles'){window.location.reload()}
         }
     </script>
 </div>

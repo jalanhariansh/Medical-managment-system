@@ -47,7 +47,7 @@ def approve(request,pk):
         if form.is_valid():
             form.save()
             channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)("apps", {'type': 'chatroom_message','message': 'refresh',})
+            async_to_sync(channel_layer.group_send)("apps", {'type': 'chatroom_message','message': 'refresh_apps',})
             messages.success(request, f'prescription has been uploaded')
             return redirect('staff-home')
     else:
