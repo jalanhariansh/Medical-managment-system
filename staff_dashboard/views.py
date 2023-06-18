@@ -24,7 +24,7 @@ class AppListView(ListView):
 def profiles(request, username):
    users = get_user_model().objects.filter(is_patient=True)
    user = get_object_or_404(users, username=username)
-   apps = Appointment.objects.filter(patient = user)
+   apps = Appointment.objects.filter(patient = user).order_by('-date_posted')
    return render(request,'staff_dashboard/profile.html',{'view_user': user,'all_users': users,'apps': apps})
 
 def basic(request):
